@@ -1,2 +1,5 @@
 /node_modules
 /yarn.lock
+/packages/client/node_modules
+/packages/client/.idea
+/packages/client/package-lock.json

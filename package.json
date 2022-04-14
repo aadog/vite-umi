@@ -5,8 +5,12 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "scripts": {
+    "build": "lerna run build"
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }
