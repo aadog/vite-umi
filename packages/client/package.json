@@ -5,11 +5,8 @@
   "author": "g.ph <g@google.com>",
   "homepage": "",
   "license": "ISC",
+  "packageManager": "yarn",
   "main": "dist/index.js",
-  "directories": {
-    "lib": "dist/index.js",
-    "test": "__tests__"
-  },
   "files": [
     "dist/*"
   ],
@@ -19,11 +16,13 @@
   },
   "gitHead": "4531de824b9a8e44f16e8f2b67252e32a5e854a4",
   "devDependencies": {
-    "@types/node": "^17.0.24",
     "@types/react": "^18.0.5",
-    "typescript": "^4.6.3"
+    "react": "^18.0.0",
+    "typescript": "^4.7.0-dev.20220408"
   },
   "dependencies": {
-    "axios": "^0.26.1"
+    "antd": "^4.19.5",
+    "axios": "^0.26.1",
+    "react-router-dom": "^6.3.0"
   }
 }

@@ -6,6 +6,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "dev:demo": "cd example &&yarn dev",
     "build": "lerna run build"
   },
   "devDependencies": {

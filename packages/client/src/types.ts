@@ -1,7 +1,52 @@
-import * as React from "react";
 import {AxiosRequestConfig, AxiosResponse} from "axios";
+import * as React from "react";
 
 
+export interface IUmiConfig{
+    //默认 'browser'
+    type?: ('browser'|'hash'|'memory')
+    //默认 "/"
+    basename?:string
+    //默认 {}
+    request?:RequestConfig
+    //初始化状态,支持函数或异步函数
+    getInitialState?:Function
+    //跳过权限处理,自己手动处理权限
+    skipAccess?:boolean
+    //权限设置
+    access?:(initialState?:Record<string, any>)=>Record<string, any>
+    //默认 []
+    routes?:IRoute[]
+}
+export interface IAppData{
+    pluginName:string
+    pluginVersion:string
+    projectName:string
+    umiConfig:IUmiConfig
+}
+export interface IRoute{
+    //是否区分大小写
+    caseSensitive?: boolean;
+    children?: IRoute[];
+    index?: boolean;
+    name?: string,
+    path?: string;
+    element?: React.ReactElement|string|Function;
+    //同步,默认true
+    getInitialPropsSync?:boolean|undefined
+    //要跳转的地址
+    redirect?: string
+    skipAccess?:boolean
+    //权限
+    access?: string|string[]
+    //元数据
+    meta?:{
+        //标题
+        title?: string
+        [name:string]:any
+    }
+    [name:string]:any
+}
 export enum ErrorShowType {
     SILENT = 0,
     WARN_MESSAGE = 1,
@@ -45,6 +90,7 @@ export interface RequestConfig extends AxiosRequestConfig {
     formatResultAdaptor?: IFormatResultAdaptor;
 }
 
+
 export type PropsWithUmi<P> = P & {
     path?:string
     access?:string[]
@@ -61,7 +107,7 @@ export type PropsWithUmi<P> = P & {
     }
     [name:string]:any
 };
-export  interface FunctionComponent<P = {}> {
+export interface FunctionComponent<P = {}> {
     (props: PropsWithUmi<P>, context?: any): React.ReactElement<any, any> | null;
     propTypes?: React.WeakValidationMap<P> | undefined;
     contextTypes?: React.ValidationMap<any> | undefined;
@@ -77,47 +123,5 @@ export  interface FunctionComponent<P = {}> {
     getInitialProps?:Function|Record<string,any>
     [name:string]:any
 }
+
 export type FC<P = {}> = FunctionComponent<P>;
-
-export interface IRoute{
-    //是否区分大小写
-    caseSensitive?: boolean;
-    children?: IRoute[];
-    index?: boolean;
-    name?: string,
-    path?: string;
-    element?: React.ReactElement|string|Function;
-    //同步,默认true
-    getInitialPropsSync?:boolean|undefined
-    //要跳转的地址
-    redirect?: string
-    skipAccess?:boolean
-    //权限
-    access?: string|string[]
-    //元数据
-    meta?:{
-        //标题
-        title?: string
-        [name:string]:any
-    }
-    [name:string]:any
-}
-
-
-export interface IUmiConfig{
-    //默认 'browser'
-    type?: ('browser'|'hash'|'memory')
-    //默认 "/"
-    basename?:string
-    //默认 {}
-    request?:RequestConfig
-    //初始化状态
-    getInitialState?:Function
-    //跳过权限处理,自己手动处理权限
-    skipAccess?:boolean
-    //权限设置
-    access?:(initialState?:Record<string, any>)=>Record<string, any>
-    //默认 []
-    routes?:IRoute[]
-}
-
