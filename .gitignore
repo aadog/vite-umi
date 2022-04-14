@@ -5,3 +5,4 @@
 /packages/client/package-lock.json
 /.idea
 /lerna-debug.log
+node_modules
