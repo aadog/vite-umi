@@ -1,0 +1,1 @@
+{"version":3,"file":"antd.js","sourceRoot":"","sources":["../src/antd.ts"],"names":[],"mappings":";;AAGA,MAAM,oBAAoB,GAAG,8CAA8C,CAAC;AAE5E,SAAS,oBAAoB,CAAE,IAAY;IACvC,OAAO,IAAI,CAAC,OAAO,CAAC,gBAAgB,EAAE,OAAO,CAAC,CAAC,iBAAiB,EAAE,CAAC;AACvE,CAAC;AAGD,MAAqB,IAAI;CAqDxB;AArDD,uBAqDC"}
