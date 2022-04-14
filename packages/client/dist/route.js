@@ -11,35 +11,21 @@ const getWrapRoutePropsElement = async (props, umiAppContext) => {
         meta: {},
         isElementType: false,
     };
-    //如果不是组件
     if (typeof props.element == "string") {
         struct.isValidElement = false;
         struct.element = props.element;
-        if (typeof props.access == "string") {
-            struct.access?.push(props.access);
-        }
-        else if (typeof props.access == "object" && props.access.length > 0) {
-            struct.access?.push(...props.access);
-        }
-        struct.getInitialPropsSync = props.getInitialPropsSync;
-        if (struct.getInitialPropsSync == undefined) {
-            struct.getInitialPropsSync = umiAppContext.initialPropsSync;
-        }
-        struct.meta = {
-            ...props.meta
-        };
-        return struct;
     }
-    if (typeof props.element == "function") {
+    else if (typeof props.element == "function") {
         //组件类型
         struct.isValidElement = true;
         struct.element = React.createElement(props.element);
         struct.isElementType = true;
+        // @ts-ignore
     }
-    // @ts-ignore
-    if (props.element._payload?._status) { //是lazy组件类型
+    else if (props.element._payload?._status) { //是lazy组件类型
         // console.log("lazy异步组件类型")
         struct.isElementType = true;
+        // @ts-ignore
         const el = React.createElement(props.element);
         // @ts-ignore
         if (el.type._payload?._status == -1) {
@@ -82,31 +68,71 @@ const getWrapRoutePropsElement = async (props, umiAppContext) => {
     if (!struct.element) {
         throw Error(`路由解析element失败,path:${props.path}`);
     }
-    if (typeof props?.access == "string") {
-        struct.access?.push(props.access);
+    struct.access = [];
+    // @ts-ignore
+    if (struct.element?.access) {
+        const el = struct.element;
+        if (typeof el.access == "string") {
+            struct.access.push(el.access);
+        }
+        else if (typeof el.access == "object" && el.access.length > 0) {
+            struct.access.push(...el.access);
+        }
+    }
+    else if (struct.element?.type?.access) {
+        const el = struct.element?.type;
+        if (typeof el.access == "string") {
+            struct.access.push(el.access);
+        }
+        else if (typeof el.access == "object" && el.access.length > 0) {
+            struct.access.push(...el.access);
+        }
+    }
+    else if (typeof props.access == "string") {
+        struct.access.push(props.access);
     }
     else if (typeof props.access == "object" && props.access.length > 0) {
-        struct.access?.push(...props.access);
+        struct.access.push(...props.access);
     }
-    // @ts-ignore
-    struct.getInitialPropsSync = props.getInitialProps;
-    if (struct.getInitialPropsSync == undefined) {
+    struct.getInitialPropsSync = true;
+    if (struct.element.getInitialPropsSync != undefined) {
+        const el = struct.element;
+        struct.getInitialPropsSync = el.getInitialPropsSync;
+    }
+    else if (struct.element.type?.getInitialPropsSync != undefined) {
+        const el = struct.element.type;
+        struct.getInitialPropsSync = el.getInitialPropsSync;
+    }
+    else if (props.getInitialPropsSync != undefined) {
+        struct.getInitialPropsSync = props.getInitialPropsSync;
+    }
+    else if (umiAppContext.initialPropsSync != undefined) {
         struct.getInitialPropsSync = umiAppContext.initialPropsSync;
     }
     struct.meta = {
-        // @ts-ignore
-        ...struct.element?.meta,
         ...props.meta,
+        ...struct.element.type?.meta,
+        ...struct.element.meta,
     };
-    // @ts-ignore
-    struct.getInitialProps = struct.element?.getInitialProps || struct.element?.type?.getInitialProps;
-    // @ts-ignore
-    const access = struct.element?.access || struct.element?.type?.access || props?.access;
-    if (typeof access == "string") {
-        struct.access?.push(access);
+    if (struct.element.getInitialProps) {
+        const el = struct.element;
+        struct.getInitialProps = el.getInitialProps;
     }
-    else if (typeof access == "object" && access.length > 0) {
-        struct.access?.push(...access);
+    else if (struct.element.type?.getInitialProps) {
+        const el = struct.element.type;
+        struct.getInitialProps = el.getInitialProps;
+    }
+    struct.loading = umiAppContext.loading;
+    if (struct.element.loading) {
+        const el = struct.element;
+        struct.loading = el.loading;
+    }
+    else if (struct.element.type?.loading) {
+        const el = struct.element.type;
+        struct.loading = el.loading;
+    }
+    else if (props.loading) {
+        struct.loading = props.loading;
     }
     return struct;
 };
@@ -162,7 +188,7 @@ const WrapRoute = (props) => {
             }
             if (el.getInitialProps) {
                 if (typeof el.getInitialProps == "function") {
-                    const result = el.getInitialProps();
+                    const result = el.getInitialProps(el);
                     if (result instanceof Promise) {
                         result.then((ld) => {
                             if (!_isUnMound) {
@@ -188,19 +214,13 @@ const WrapRoute = (props) => {
                 }
             }
         });
-        /*
-        (async () => {
-            const el = await getWrapRoutePropsElement(props, umiAppContext)
-
-        })()
-        */
         return () => {
             _isUnMound = true;
         };
         // @ts-ignore
     }, [routeContext.route?.props?.skipAccess]);
     if (authState == undefined) {
-        return umiAppContext.loading;
+        return elState?.loading;
     }
     else if (authState.auth == false) {
         return React.cloneElement(umiAppContext.noAccess, authState);
@@ -209,7 +229,7 @@ const WrapRoute = (props) => {
         return props.element;
     }
     else if (elState.getInitialPropsSync && initialPropsState == undefined) {
-        return umiAppContext.loading;
+        return elState?.loading;
     }
     const newProps = {
         access: elState.access,
@@ -235,11 +255,6 @@ function transformRoute(route) {
         route.element = React.createElement(Navigate, { to: route.redirect });
     }
     else if (route.element) {
-        // @ts-ignore
-        route.access = route.element.access || route.access;
-        // @ts-ignore
-        route.meta = route.element.meta || route.meta;
-        route.getInitialPropsSync = route.getInitialPropsSync;
         route.element = (React.createElement(WrapRoute, { ...route, key: route.path }, route.element));
     }
     if (route.children) {

@@ -23,6 +23,7 @@ export interface IRoute {
     path?: string;
     element?: React.ReactElement | string | Function;
     getInitialPropsSync?: boolean | undefined;
+    loading?: React.ReactElement | string;
     redirect?: string;
     skipAccess?: boolean;
     access?: string | string[];
@@ -103,6 +104,8 @@ export interface FunctionComponent<P = {}> {
         [name: string]: any;
     };
     getInitialProps?: Function | Record<string, any>;
+    getInitialPropsSync?: boolean;
+    loading?: React.ReactElement | string;
     [name: string]: any;
 }
 export declare type FC<P = {}> = FunctionComponent<P>;

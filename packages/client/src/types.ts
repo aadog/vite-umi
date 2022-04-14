@@ -34,6 +34,8 @@ export interface IRoute{
     element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
+    //加载组件
+    loading?:React.ReactElement|string
     //要跳转的地址
     redirect?: string
     skipAccess?:boolean
@@ -121,6 +123,8 @@ export interface FunctionComponent<P = {}> {
         [name:string]:any
     }
     getInitialProps?:Function|Record<string,any>
+    getInitialPropsSync?:boolean
+    loading?:React.ReactElement|string
     [name:string]:any
 }
 

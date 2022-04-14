@@ -14,6 +14,8 @@ type WrapRouteProps={
     element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
+    //加载组件
+    loading?:React.ReactElement|string
     //权限
     access?: string|string[]
     //元数据
@@ -27,12 +29,13 @@ type WrapRouteProps={
 const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUmiAppContext) => {
     let struct: {
         access?: string[]
-        element: React.ReactElement | string
+        element: React.ReactElement | string|any
         isValidElement: boolean
         isElementType:boolean
         //同步,默认true
         getInitialPropsSync?: boolean | undefined
         getInitialProps?:Function|object
+        loading?:React.ReactElement|string
         meta: {
             //标题
             title?: string
@@ -45,35 +48,22 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
         meta: {},
         isElementType:false,
     }
-    //如果不是组件
+
+
+
     if (typeof props.element == "string") {
         struct.isValidElement = false
         struct.element = props.element as string
-        if (typeof props.access == "string") {
-            struct.access?.push(props.access)
-        } else if (typeof props.access == "object" && props.access.length > 0) {
-            struct.access?.push(...props.access)
-        }
-        struct.getInitialPropsSync = props.getInitialPropsSync
-        if (struct.getInitialPropsSync == undefined) {
-            struct.getInitialPropsSync = umiAppContext.initialPropsSync
-        }
-        struct.meta = {
-            ...props.meta
-        }
-        return struct
-    }
-    if (typeof props.element == "function") {
+    }else if (typeof props.element == "function") {
         //组件类型
         struct.isValidElement = true
         struct.element = React.createElement(props.element as React.FC)
         struct.isElementType=true
-    }
-
-    // @ts-ignore
-    if (props.element._payload?._status) {//是lazy组件类型
+        // @ts-ignore
+    }else if (props.element._payload?._status) {//是lazy组件类型
         // console.log("lazy异步组件类型")
         struct.isElementType=true
+        // @ts-ignore
         const el=React.createElement(props.element as React.ElementType)
         // @ts-ignore
         if (el.type._payload?._status == -1) {
@@ -113,34 +103,71 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
         throw Error(`路由解析element失败,path:${props.path}`)
     }
 
-    if (typeof props?.access == "string") {
-        struct.access?.push(props.access)
+
+    struct.access=[]
+    // @ts-ignore
+    if(struct.element?.access){
+        const el:any=struct.element
+        if (typeof el.access == "string") {
+            struct.access.push(el.access)
+        } else if (typeof el.access == "object" && el.access.length > 0) {
+            struct.access.push(...el.access)
+        }
+    }else if(struct.element?.type?.access){
+        const el:any=struct.element?.type
+        if (typeof el.access == "string") {
+            struct.access.push(el.access)
+        } else if (typeof el.access == "object" && el.access.length > 0) {
+            struct.access.push(...el.access)
+        }
+    }else if (typeof props.access == "string") {
+        struct.access.push(props.access)
     } else if (typeof props.access == "object" && props.access.length > 0) {
-        struct.access?.push(...props.access)
+        struct.access.push(...props.access)
     }
 
-    // @ts-ignore
-    struct.getInitialPropsSync = props.getInitialProps
-    if (struct.getInitialPropsSync == undefined) {
+
+
+
+    struct.getInitialPropsSync=true
+    if(struct.element.getInitialPropsSync!=undefined){
+        const el=struct.element
+        struct.getInitialPropsSync=el.getInitialPropsSync
+    }else if(struct.element.type?.getInitialPropsSync!=undefined){
+        const el=struct.element.type
+        struct.getInitialPropsSync=el.getInitialPropsSync
+    }else if(props.getInitialPropsSync!=undefined){
+        struct.getInitialPropsSync = props.getInitialPropsSync
+    }else if(umiAppContext.initialPropsSync!=undefined){
         struct.getInitialPropsSync = umiAppContext.initialPropsSync
     }
 
-    struct.meta = {
-        // @ts-ignore
-        ...struct.element?.meta,
+
+    struct.meta={
         ...props.meta,
-
+        ...struct.element.type?.meta,
+        ...struct.element.meta,
     }
 
-    // @ts-ignore
-    struct.getInitialProps=struct.element?.getInitialProps||struct.element?.type?.getInitialProps
-    // @ts-ignore
-    const access=struct.element?.access||struct.element?.type?.access||props?.access
-    if (typeof access == "string") {
-        struct.access?.push(access)
-    } else if (typeof access == "object" && access.length > 0) {
-        struct.access?.push(...access)
+    if(struct.element.getInitialProps){
+        const el=struct.element
+        struct.getInitialProps=el.getInitialProps
+    }else if(struct.element.type?.getInitialProps){
+        const el=struct.element.type
+        struct.getInitialProps=el.getInitialProps
     }
+
+    struct.loading=umiAppContext.loading
+    if(struct.element.loading){
+        const el=struct.element
+        struct.loading=el.loading
+    }else if(struct.element.type?.loading){
+        const el=struct.element.type
+        struct.loading=el.loading
+    }else if(props.loading){
+        struct.loading=props.loading
+    }
+
     return struct
 }
 
@@ -157,6 +184,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
         //同步,默认true
         getInitialPropsSync?: boolean | undefined
         getInitialProps?:Function|object
+        loading?:React.ReactElement|string
         meta: {
             //标题
             title?: string
@@ -215,7 +243,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
 
             if (el.getInitialProps) {
                 if (typeof el.getInitialProps == "function") {
-                    const result = el.getInitialProps()
+                    const result = el.getInitialProps(el)
                     if (result instanceof Promise) {
                         result.then((ld)=>{
                             if (!_isUnMound) {
@@ -239,12 +267,6 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                 }
             }
         })
-        /*
-        (async () => {
-            const el = await getWrapRoutePropsElement(props, umiAppContext)
-
-        })()
-        */
         return ()=>{
             _isUnMound=true
         }
@@ -252,15 +274,14 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     }, [routeContext.route?.props?.skipAccess])
 
 
-
     if (authState == undefined) {
-        return umiAppContext.loading
+        return elState?.loading
     } else if (authState.auth == false) {
         return React.cloneElement(umiAppContext.noAccess, authState)
     }else if(!elState?.isValidElement){
         return props.element
     }else if(elState.getInitialPropsSync&&initialPropsState==undefined){
-        return umiAppContext.loading
+        return elState?.loading
     }
 
 
@@ -286,11 +307,6 @@ function transformRoute(route:IRoute){
     if(route.redirect){
         route.element=<Navigate to={route.redirect}></Navigate>
     }else if(route.element){
-        // @ts-ignore
-        route.access=route.element.access||route.access
-        // @ts-ignore
-        route.meta=route.element.meta||route.meta
-        route.getInitialPropsSync=route.getInitialPropsSync
         route.element = (
             <WrapRoute {...route} key={route.path}>
                 {route.element}
@@ -307,8 +323,6 @@ export function transformRoutes(umiConfig:IUmiConfig):RouteObject[]{
     const routes:RouteObject[]=[]
     umiConfig.routes?.map((item)=>{
         transformRoute(item)
-
-
         routes.push({
             path:item.path,
             // @ts-ignore

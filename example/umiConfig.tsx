@@ -5,13 +5,13 @@ import route1 from "./route1";
 
 export default defineUmi({
     access:()=>{
-      return {a:"b"}
+      return {"test":true}
     },
-    getInitialState:()=>{
-      return {state:"b"}
-    },
+    // getInitialState:()=>{
+    //   return {state:"b"}
+    // },
     routes:[
-        {path:"/",element:"test"},
+        // {path:"/",element:"test",},
         route1
     ]
 })
