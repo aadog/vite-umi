@@ -1,6 +1,5 @@
 {
   "name": "@vite-umi/plugin",
-  "repository": "https://github.com/aadog/vite-umi.git",
   "version": "0.0.5",
   "description": "> TODO: description",
   "author": "g.ph <g@google.com>",
@@ -17,5 +16,5 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "gitHead": "9157780cbc8300494fecb779a2d141cfd2ee97b1"
+  "gitHead": "9e9c77858ae3310e227e30dfd82fed1481ba3eef"
 }
