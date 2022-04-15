@@ -279,6 +279,15 @@ export function transformRoutes(umiConfig) {
     });
     return routes;
 }
+export function routeToUmiRoute(f) {
+    // @ts-ignore
+    const r = { ...f };
+    r.routes = [];
+    f.children?.map((item) => {
+        r.routes.push(item);
+    });
+    return r;
+}
 export const DynamicRouter = (props) => {
     if (props.type == "memory") {
         return React.createElement(MemoryRouter, { basename: props.basename, children: props.children });

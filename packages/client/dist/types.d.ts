@@ -15,6 +15,14 @@ export interface IAppData {
     projectName: string;
     umiConfig: IUmiConfig;
 }
+export interface IUmiRoute {
+    name?: string;
+    path?: string;
+    icon?: string;
+    redirect?: string;
+    access?: string;
+    [name: string]: any;
+}
 export interface IRoute {
     caseSensitive?: boolean;
     children?: IRoute[];

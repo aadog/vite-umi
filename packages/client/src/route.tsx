@@ -335,7 +335,7 @@ export function transformRoutes(umiConfig:IUmiConfig):RouteObject[]{
     })
     return routes
 }
-export function routesToUmiRoute(f:IRoute):IUmiRoute{
+export function routeToUmiRoute(f:IRoute):IUmiRoute{
     // @ts-ignore
     const r:IUmiRoute={...f}
     r.routes=[]
