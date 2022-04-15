@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {IUmiAppContext, UmiAppContext} from "./UmiAppContext";
 import {useAccess} from "./access";
 import {RouteContext} from "./RouteContext";
-import {IRoute, IUmiConfig} from "./types";
+import {IRoute, IUmiConfig, IUmiRoute} from "./types";
 import {BrowserRouter, HashRouter, MemoryRouter, Navigate, RouteObject} from "react-router-dom";
 
 
@@ -335,7 +335,15 @@ export function transformRoutes(umiConfig:IUmiConfig):RouteObject[]{
     })
     return routes
 }
-
+export function routesToUmiRoute(f:IRoute):IUmiRoute{
+    // @ts-ignore
+    const r:IUmiRoute={...f}
+    r.routes=[]
+    f.children?.map((item)=>{
+        r.routes.push(item)
+    })
+    return r
+}
 
 export type DynamicRouterProps = {
     type?: string

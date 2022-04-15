@@ -24,6 +24,15 @@ export interface IAppData{
     projectName:string
     umiConfig:IUmiConfig
 }
+export interface IUmiRoute{
+    name?: string,
+    path?: string;
+    icon?:string
+    //要跳转的地址
+    redirect?: string
+    access?: string
+    [name:string]:any
+}
 export interface IRoute{
     //是否区分大小写
     caseSensitive?: boolean;
