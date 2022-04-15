@@ -1,5 +1,5 @@
 import {ConfigEnv, mergeConfig, UserConfig} from "vite";
-import {AppData} from "./appdata";
+import {AppData, useAppData} from "./appdata";
 
 const ANTD_IMPORT_LINE_REG = /import {[\w,\s]+} from (\'|\")antd(\'|\");?/g;
 
@@ -9,39 +9,40 @@ function transformToKebabCase (name: string) {
 
 
 export default class Antd {
-    // static config(config: UserConfig, env: ConfigEnv): UserConfig{
-    //     if(!AppData.pluginOptions.antd){
-    //         return config
-    //     }
-    //     if (AppData.pluginOptions.antd.style == "less") {
-    //         config=mergeConfig(config,{
-    //             css:{
-    //                 preprocessorOptions:{
-    //                     less: {
-    //                         javascriptEnabled: true
-    //                     }
-    //                 }
-    //             }
-    //         } as UserConfig)
-    //     }
-    //     if (AppData.pluginOptions.antd.pro == true) {
-    //         config=mergeConfig(config,{
-    //             css:{
-    //                 preprocessorOptions:{
-    //                     less:{
-    //                         javascriptEnabled: true,
-    //                     }
-    //                 }
-    //             },
-    //             resolve:{
-    //                 alias:[
-    //                     {find:/^~/,replacement:""},
-    //                 ]
-    //             }
-    //         } as UserConfig)
-    //     }
-    //     return config
-    // }
+    static config(config: UserConfig, env: ConfigEnv): UserConfig{
+        const appData=useAppData()
+        if(!appData.pluginOptions.antd){
+            return config
+        }
+        if (appData.pluginOptions.antd.style == "less") {
+            config=mergeConfig(config,{
+                css:{
+                    preprocessorOptions:{
+                        less: {
+                            javascriptEnabled: true
+                        }
+                    }
+                }
+            } as UserConfig)
+        }
+        if (appData.pluginOptions.antd.pro == true) {
+            config=mergeConfig(config,{
+                css:{
+                    preprocessorOptions:{
+                        less:{
+                            javascriptEnabled: true,
+                        }
+                    }
+                },
+                resolve:{
+                    alias:[
+                        {find:/^~/,replacement:""},
+                    ]
+                }
+            } as UserConfig)
+        }
+        return config
+    }
     // static transform(code: string, id: string, options?: { ssr?: boolean }){
     //     if(!AppData.pluginOptions.antd){
     //         return code

@@ -28,7 +28,7 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
                     ]
                 }
             } as UserConfig)
-            // config = antd?.config(config, env)
+            config = antd?.config(config, env)
 
             return config
         },
