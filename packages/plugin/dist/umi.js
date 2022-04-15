@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const vite_1 = require("vite");
+const antd_1 = __importDefault(require("./antd"));
 const path_1 = __importDefault(require("path"));
 const appData_1 = require("./appData");
 const utils_1 = require("./utils");
@@ -21,7 +22,7 @@ function umi(pluginOptions) {
                     ]
                 }
             });
-            // config = antd?.config(config, env)
+            config = antd_1.default?.config(config, env);
             return config;
         },
         transform(code, id, options) {
