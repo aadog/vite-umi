@@ -21,6 +21,7 @@
     "typescript": "^4.7.0-dev.20220408"
   },
   "dependencies": {
+    "@ahooksjs/use-request": "^2.8.15",
     "antd": "^4.19.5",
     "axios": "^0.26.1",
     "react-router-dom": "^6.3.0"
