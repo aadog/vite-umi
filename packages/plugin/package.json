@@ -1,6 +1,6 @@
 {
   "name": "@vite-umi/plugin",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "> TODO: description",
   "author": "g.ph <g@google.com>",
   "homepage": "",
@@ -15,8 +15,8 @@
   },
   "gitHead": "4531de824b9a8e44f16e8f2b67252e32a5e854a4",
   "dependencies": {
-    "pkginfo": "^0.4.1",
-    "art-template": "^4.13.2"
+    "art-template": "^4.13.2",
+    "pkginfo": "^0.4.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.24",
