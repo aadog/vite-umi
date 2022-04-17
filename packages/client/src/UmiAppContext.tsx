@@ -26,7 +26,7 @@ export const UmiAppContext =React.createContext<IUmiAppContext>({
     initialStateError:<InitialStateError />,
     initialStateSync:true,
     initialPropsSync:true,
-    loading:<Spin size={"large"} tip={<div style={ {marginTop:10} }>加载中...</div>} style={ {width:"100%",height:"100%",top:"30%",position:'absolute'} }/>,
+    loading:<></>,
     notfound:<Result status="404" extra={"找不到页面"} />,
     noAccess: <Result status="403" extra={"没有权限访问"} />,
 })
