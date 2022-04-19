@@ -74,7 +74,7 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
             // @ts-ignore
         }else if(el.type._payload?._status==1){
             // @ts-ignore
-            const load=(await el.type._payload?._result)
+            const load=(await el.type._payload?._result.default)
             struct.element=load
             struct.isValidElement=true
         }
@@ -199,9 +199,11 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     const [initialPropsState, setInitialPropsState] = useState<Record<string, any>|undefined>(undefined);
 
 
+
     useEffect(() => {
         let _isUnMound=false
-        getWrapRoutePropsElement(props, umiAppContext).then((el) => {
+        const fn=async ()=>{
+            const el=await getWrapRoutePropsElement(props, umiAppContext)
             if (!_isUnMound) {
                 setElState(el)
             }
@@ -266,7 +268,8 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                     setInitialPropsState({})
                 }
             }
-        })
+        }
+        fn()
         return ()=>{
             _isUnMound=true
         }

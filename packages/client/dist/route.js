@@ -37,7 +37,7 @@ const getWrapRoutePropsElement = async (props, umiAppContext) => {
         }
         else if (el.type._payload?._status == 1) {
             // @ts-ignore
-            const load = (await el.type._payload?._result);
+            const load = (await el.type._payload?._result.default);
             struct.element = load;
             struct.isValidElement = true;
         }
@@ -146,7 +146,8 @@ const WrapRoute = (props) => {
     const [initialPropsState, setInitialPropsState] = useState(undefined);
     useEffect(() => {
         let _isUnMound = false;
-        getWrapRoutePropsElement(props, umiAppContext).then((el) => {
+        const fn = async () => {
+            const el = await getWrapRoutePropsElement(props, umiAppContext);
             if (!_isUnMound) {
                 setElState(el);
             }
@@ -213,7 +214,8 @@ const WrapRoute = (props) => {
                     setInitialPropsState({});
                 }
             }
-        });
+        };
+        fn();
         return () => {
             _isUnMound = true;
         };
