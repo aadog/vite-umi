@@ -138,6 +138,7 @@ const getWrapRoutePropsElement = async (props, umiAppContext) => {
 };
 // @ts-ignore
 const WrapRoute = (props) => {
+    return "aaa";
     const umiAppContext = useContext(UmiAppContext);
     const routeContext = useContext(RouteContext);
     const access = useAccess();

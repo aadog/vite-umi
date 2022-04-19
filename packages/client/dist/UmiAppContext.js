@@ -10,7 +10,7 @@ export const UmiAppContext = React.createContext({
     initialStateError: React.createElement(InitialStateError, null),
     initialStateSync: true,
     initialPropsSync: true,
-    loading: React.createElement(Spin, { size: "large", tip: React.createElement("div", { style: { marginTop: 10 } }, "\u52A0\u8F7D\u4E2D..."), style: { width: "100%", height: "100%", top: "30%", position: 'absolute' } }),
+    loading: React.createElement(React.Fragment, null),
     notfound: React.createElement(Result, { status: "404", extra: "找不到页面" }),
     noAccess: React.createElement(Result, { status: "403", extra: "没有权限访问" }),
 });
