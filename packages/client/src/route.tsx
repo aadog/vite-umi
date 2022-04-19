@@ -173,7 +173,6 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
 
 // @ts-ignore
 const WrapRoute: React.FC<WrapRouteProps> = (props) => {
-    return "aaa"
     const umiAppContext = useContext(UmiAppContext);
     const routeContext = useContext(RouteContext);
     const access = useAccess()
