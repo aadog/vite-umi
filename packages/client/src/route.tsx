@@ -343,7 +343,7 @@ export function routeToUmiRoute(f:IRoute):IUmiRoute{
     const r:IUmiRoute={...f}
     r.routes=[]
     f.children?.map((item)=>{
-        r.routes.push(item)
+        r.routes.push(routeToUmiRoute(item))
     })
     return r
 }

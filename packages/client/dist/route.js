@@ -286,7 +286,7 @@ export function routeToUmiRoute(f) {
     const r = { ...f };
     r.routes = [];
     f.children?.map((item) => {
-        r.routes.push(item);
+        r.routes.push(routeToUmiRoute(item));
     });
     return r;
 }
