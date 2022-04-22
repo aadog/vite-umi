@@ -1,6 +1,7 @@
 
-import {IRoute, IUmiConfig} from "./types";
+import {IRoute, IUmiConfig, IUmiRoute} from "./types";
 
+export type {IUmiRoute}
 
 export function defineUmi(umiConfig:IUmiConfig):IUmiConfig{
     return umiConfig
