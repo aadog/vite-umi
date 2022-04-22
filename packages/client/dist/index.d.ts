@@ -1,4 +1,5 @@
-import { IRoute, IUmiConfig } from "./types";
+import { IRoute, IUmiConfig, IUmiRoute } from "./types";
+export type { IUmiRoute };
 export declare function defineUmi(umiConfig: IUmiConfig): IUmiConfig;
 export declare function defineRoute(umiRoute: IRoute): IRoute;
 export { PropsWithUmi, FunctionComponent, FC, RequestConfig, IFormatResultAdaptor, RequestError, IErrorHandler, IAdaptor, IAppData, IUmiConfig, IRoute, ErrorShowType, IErrorInfo, } from './types';
