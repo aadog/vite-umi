@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { UmiAppContext } from "./UmiAppContext";
 import { useAccess } from "./access";
 import { RouteContext } from "./RouteContext";
@@ -144,11 +144,16 @@ const WrapRoute = (props) => {
     const [elState, setElState] = useState();
     const [authState, setAuthState] = useState(undefined);
     const [initialPropsState, setInitialPropsState] = useState(undefined);
+    const _isUnMound = useRef(false);
     useEffect(() => {
-        let _isUnMound = false;
+        return () => {
+            _isUnMound.current = true;
+        };
+    });
+    useEffect(() => {
         const fn = async () => {
             const el = await getWrapRoutePropsElement(props, umiAppContext);
-            if (!_isUnMound) {
+            if (!_isUnMound.current) {
                 setElState(el);
             }
             // @ts-ignore
@@ -158,7 +163,7 @@ const WrapRoute = (props) => {
                 if (typeof el.access == 'string') {
                     if (access[el.access] != true) {
                         forbid = el.access;
-                        if (!_isUnMound) {
+                        if (!_isUnMound.current) {
                             setAuthState({ auth: false, allows: allows, forbid: forbid });
                         }
                         return;
@@ -170,7 +175,7 @@ const WrapRoute = (props) => {
                         if (access[a] != true) {
                             forbid = el.access;
                             forbid = a;
-                            if (!_isUnMound) {
+                            if (!_isUnMound.current) {
                                 setAuthState({ auth: false, allows: allows, forbid: forbid });
                             }
                             return;
@@ -178,12 +183,12 @@ const WrapRoute = (props) => {
                         allows.push(a);
                     }
                 }
-                if (!_isUnMound) {
+                if (!_isUnMound.current) {
                     setAuthState({ auth: true, allows: el.access, forbid: forbid });
                 }
             }
             else {
-                if (!_isUnMound) {
+                if (!_isUnMound.current) {
                     setAuthState({ auth: true, allows: el.access });
                 }
             }
@@ -192,32 +197,31 @@ const WrapRoute = (props) => {
                     const result = el.getInitialProps(el);
                     if (result instanceof Promise) {
                         result.then((ld) => {
-                            if (!_isUnMound) {
+                            if (!_isUnMound.current) {
                                 setInitialPropsState(ld);
                             }
                         });
                     }
                     else {
-                        if (!_isUnMound) {
+                        if (!_isUnMound.current) {
                             setInitialPropsState(result);
                         }
                     }
                 }
                 else {
-                    if (!_isUnMound) {
+                    if (!_isUnMound.current) {
                         setInitialPropsState(el.getInitialProps);
                     }
                 }
             }
             else {
-                if (!_isUnMound) {
+                if (!_isUnMound.current) {
                     setInitialPropsState({});
                 }
             }
         };
         fn();
         return () => {
-            _isUnMound = true;
         };
         // @ts-ignore
     }, [routeContext.route?.props?.skipAccess]);

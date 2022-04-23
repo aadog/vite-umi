@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {IUmiAppContext, UmiAppContext} from "./UmiAppContext";
 import {useAccess} from "./access";
 import {RouteContext} from "./RouteContext";
@@ -173,6 +173,7 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
 
 // @ts-ignore
 const WrapRoute: React.FC<WrapRouteProps> = (props) => {
+
     const umiAppContext = useContext(UmiAppContext);
     const routeContext = useContext(RouteContext);
     const access = useAccess()
@@ -198,13 +199,19 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     } | undefined>(undefined);
     const [initialPropsState, setInitialPropsState] = useState<Record<string, any>|undefined>(undefined);
 
+    const _isUnMound = useRef(false);
+    useEffect(()=>{
+        return ()=>{
+            _isUnMound.current=true
+        }
+    })
 
 
     useEffect(() => {
-        let _isUnMound=false
+
         const fn=async ()=>{
             const el=await getWrapRoutePropsElement(props, umiAppContext)
-            if (!_isUnMound) {
+            if (!_isUnMound.current) {
                 setElState(el)
             }
 
@@ -215,7 +222,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                 if (typeof el.access == 'string') {
                     if (access[el.access as string] != true) {
                         forbid = el.access
-                        if (!_isUnMound) {
+                        if (!_isUnMound.current) {
                             setAuthState({auth: false, allows: allows, forbid: forbid})
                         }
                         return
@@ -226,7 +233,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                         if (access[a] != true) {
                             forbid = el.access
                             forbid = a
-                            if (!_isUnMound) {
+                            if (!_isUnMound.current) {
                                 setAuthState({auth: false, allows: allows, forbid: forbid})
                             }
                             return
@@ -234,11 +241,11 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                         allows.push(a)
                     }
                 }
-                if (!_isUnMound) {
+                if (!_isUnMound.current) {
                     setAuthState({auth: true, allows: el.access, forbid: forbid})
                 }
             } else {
-                if (!_isUnMound) {
+                if (!_isUnMound.current) {
                     setAuthState({auth: true, allows: el.access})
                 }
             }
@@ -248,33 +255,34 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                     const result = el.getInitialProps(el)
                     if (result instanceof Promise) {
                         result.then((ld)=>{
-                            if (!_isUnMound) {
+                            if (!_isUnMound.current) {
                                 setInitialPropsState(ld)
                             }
                         })
                     } else {
-                        if (!_isUnMound) {
+                        if (!_isUnMound.current) {
                             setInitialPropsState(result)
                         }
                     }
                 } else {
-                    if (!_isUnMound) {
+                    if (!_isUnMound.current) {
 
                         setInitialPropsState(el.getInitialProps)
                     }
                 }
             } else {
-                if (!_isUnMound) {
+                if (!_isUnMound.current) {
                     setInitialPropsState({})
                 }
             }
         }
         fn()
         return ()=>{
-            _isUnMound=true
+
         }
         // @ts-ignore
     }, [routeContext.route?.props?.skipAccess])
+
 
 
     if (authState == undefined) {
@@ -286,7 +294,6 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     }else if(elState.getInitialPropsSync&&initialPropsState==undefined){
         return elState?.loading
     }
-
 
     const newProps={
         access:elState.access,

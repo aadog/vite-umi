@@ -79,14 +79,20 @@ type UmiAppEntryProps = {
 }
 export const UmiAppEntry: React.FC<UmiAppEntryProps> = (props) => {
     const umiAppContext = React.useContext(UmiAppContext);
+    const initialStateSyncInited=React.useRef(false)
     if(umiAppContext.initialStateSync){
         const initialStateModel=useModel("@@initialState")
-        if(initialStateModel.loading){
-            return umiAppContext.initialStateLoading
+
+        if(initialStateSyncInited.current==false){
+            if(initialStateModel.loading){
+                return umiAppContext.initialStateLoading
+            }
+            if(initialStateModel.error){
+                return umiAppContext.initialStateError
+            }
+            initialStateSyncInited.current=true
         }
-        if(initialStateModel.error){
-            return umiAppContext.initialStateError
-        }
+
     }
 
     return (
