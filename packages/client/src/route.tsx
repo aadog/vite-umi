@@ -173,7 +173,6 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
 
 // @ts-ignore
 const WrapRoute: React.FC<WrapRouteProps> = (props) => {
-
     const umiAppContext = useContext(UmiAppContext);
     const routeContext = useContext(RouteContext);
     const access = useAccess()
@@ -200,17 +199,12 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     const [initialPropsState, setInitialPropsState] = useState<Record<string, any>|undefined>(undefined);
 
     const _isUnMound = useRef(false);
-    useEffect(()=>{
-        return ()=>{
-            _isUnMound.current=true
-        }
-    })
-
 
     useEffect(() => {
 
         const fn=async ()=>{
             const el=await getWrapRoutePropsElement(props, umiAppContext)
+
             if (!_isUnMound.current) {
                 setElState(el)
             }
@@ -250,6 +244,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                 }
             }
 
+
             if (el.getInitialProps) {
                 if (typeof el.getInitialProps == "function") {
                     const result = el.getInitialProps(el)
@@ -278,7 +273,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
         }
         fn()
         return ()=>{
-
+            _isUnMound.current=true
         }
         // @ts-ignore
     }, [routeContext.route?.props?.skipAccess])
@@ -292,6 +287,7 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     }else if(!elState?.isValidElement){
         return props.element
     }else if(elState.getInitialPropsSync&&initialPropsState==undefined){
+
         return elState?.loading
     }
 

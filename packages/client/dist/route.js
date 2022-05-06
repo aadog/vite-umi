@@ -146,11 +146,6 @@ const WrapRoute = (props) => {
     const [initialPropsState, setInitialPropsState] = useState(undefined);
     const _isUnMound = useRef(false);
     useEffect(() => {
-        return () => {
-            _isUnMound.current = true;
-        };
-    });
-    useEffect(() => {
         const fn = async () => {
             const el = await getWrapRoutePropsElement(props, umiAppContext);
             if (!_isUnMound.current) {
@@ -222,6 +217,7 @@ const WrapRoute = (props) => {
         };
         fn();
         return () => {
+            _isUnMound.current = true;
         };
         // @ts-ignore
     }, [routeContext.route?.props?.skipAccess]);
