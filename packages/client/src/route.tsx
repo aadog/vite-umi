@@ -287,7 +287,6 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     }else if(!elState?.isValidElement){
         return props.element
     }else if(elState.getInitialPropsSync&&initialPropsState==undefined){
-
         return elState?.loading
     }
 

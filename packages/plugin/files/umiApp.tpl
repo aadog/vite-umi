@@ -59,7 +59,7 @@ export const UmiApp: React.FC<UmiAppProps> = (props) => {
     umiAppContext.initialStateLoading=props.initialStateLoading||umiAppContext.initialStateLoading
     umiAppContext.initialStateError=props.initialStateError||umiAppContext.initialStateError
     umiAppContext.loading=props.loading||umiAppContext.loading
-    umiAppContext.notfound=props.loading||umiAppContext.notfound
+    umiAppContext.notfound=props.notfound||umiAppContext.notfound
     umiAppContext.noAccess=props.noAccess||umiAppContext.noAccess
     umiAppContext.routes=transformRoutes(useAppData().umiConfig)
     umiAppContext.appData=appData
